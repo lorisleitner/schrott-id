@@ -1,9 +1,11 @@
-using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
 namespace SchrottId;
 
+/// <summary>
+/// Allows encoding and decoding of SchrottIDs
+/// </summary>
 public class SchrottId
 {
     private readonly string _alphabet;
@@ -14,6 +16,21 @@ public class SchrottId
 
     private readonly int _minLength;
 
+    /// <summary>
+    /// Creates a new instance of the SchrottID encoder class.
+    /// SchrottIDs can only be decoded if the parameters to this constructor are equal
+    /// to the ones that were supplied to create the SchrottID.
+    ///
+    /// This constructor verifies parameters and creates internal structures.
+    /// Instances should be reused as often as possible.
+    /// </summary>
+    /// <param name="alphabet">The alphabet that the encoder and decoder will use.</param>
+    /// <param name="permutation">The randomly generated permutation to use.
+    /// Generate permutations using <see cref="GeneratePermutation"/>.
+    /// Permutations are dependent on the supplied alphabet.</param>
+    /// <param name="minLength">The minimum length of the encoded ID that the <see cref="Encode"/> method will produce.</param>
+    /// <exception cref="ArgumentException">A supplied parameter cannot be used to create an encoder.</exception>
+    /// <exception cref="FormatException">The permutation is not a valid Base64 string.</exception>
     public SchrottId(
         string alphabet,
         string permutation,
@@ -80,6 +97,12 @@ public class SchrottId
         _minLength = minLength;
     }
 
+    /// <summary>
+    /// Generates a secure random permutation for the supplied alphabet.
+    /// </summary>
+    /// <param name="alphabet">The alphabet</param>
+    /// <returns>A randomly generated permutation to use the <see cref="SchrottId"/> class.</returns>
+    /// <exception cref="ArgumentException">Alphabet is not between 2 and 256 chars long or chars are not unique.</exception>
     public static string GeneratePermutation(string alphabet)
     {
         if (alphabet.Length is <= 1 or > 256)
@@ -113,6 +136,11 @@ public class SchrottId
         return Convert.ToBase64String(buf);
     }
 
+    /// <summary>
+    /// Encodes an integer value to a SchrottID.
+    /// </summary>
+    /// <param name="value">The value to encode.</param>
+    /// <returns>Encoded SchrottID</returns>
     public string Encode(UInt64 value)
     {
         var length = GetLength(value);
@@ -134,6 +162,15 @@ public class SchrottId
         return ConvertToString(buf);
     }
 
+    /// <summary>
+    /// Decodes a SchrottID back to an integer value.
+    ///
+    /// This method allocates n bytes memory on the stack where n = value.Length.
+    /// Make sure to check the length of value before calling this method
+    /// </summary>
+    /// <param name="value">The value to decode</param>
+    /// <returns>The decoded SchrottID</returns>
+    /// <exception cref="FormatException">The supplied value contains a character that is not present in the alphabet</exception>
     public UInt64 Decode(string value)
     {
         Span<byte> buf = stackalloc byte[value.Length];
