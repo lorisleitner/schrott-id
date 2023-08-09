@@ -8,7 +8,7 @@ public class SchrottIdTest
         "HwEMFAcAMAYEPxc4Dy4RAxAkEgstJggbGSMiKB0yHgk7OSsNMxoYKRMWNg49LzEFFTQKPDUhHAIsICclOio+Nw==";
 
     [Fact]
-    public void EncodeDecode10000()
+    public void TestEncodeDecode10000()
     {
         var schrottId = new SchrottId(Alphabets.Base64, Permutation, minLength: 3);
 
@@ -22,7 +22,7 @@ public class SchrottIdTest
     }
 
     [Fact]
-    public void EncodeDecodeControl()
+    public void TestEncodeDecodeControl()
     {
         // control.txt contains the encoded values from 0 to 9999
 
@@ -40,7 +40,7 @@ public class SchrottIdTest
     }
 
     [Fact]
-    public void GeneratePermutation()
+    public void TestGeneratePermutation()
     {
         var permutation = SchrottId.GeneratePermutation(Alphabets.Base64);
         var permutationBytes = Convert.FromBase64String(permutation);
@@ -50,6 +50,30 @@ public class SchrottIdTest
         Assert.True(permutationBytes.Distinct().Count() == permutationBytes.Length);
         Assert.True(permutationBytes.Min() == 0);
         Assert.True(permutationBytes.Max() == Alphabets.Base64.Length - 1);
+    }
+
+    [Fact]
+    public void TestGeneratePermutationAlphabetTooShort()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => SchrottId.GeneratePermutation("A"));
+
+        Assert.Contains("Alphabet length must have 2 to 256 characters", ex.Message);
+    }
+
+    [Fact]
+    public void TestGeneratePermutationAlphabetTooLong()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => SchrottId.GeneratePermutation(new string('A', 257)));
+
+        Assert.Contains("Alphabet length must have 2 to 256 characters", ex.Message);
+    }
+
+    [Fact]
+    public void TestGeneratePermutationAlphabetNonUnique()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => SchrottId.GeneratePermutation(new string('A', 256)));
+
+        Assert.Contains("Alphabet must have unique characters", ex.Message);
     }
 
     [Fact]
@@ -117,5 +141,15 @@ public class SchrottIdTest
             new SchrottId(Alphabets.Base32, "twUkTIghtQiRcOQfJtmNRrYbOa9viXe784YeeHp8gec=", 3));
 
         Assert.Contains("Invalid indices for used alphabet", ex.Message);
+    }
+
+    [Fact]
+    public void TestDecodeInvalid()
+    {
+        var schrottId = new SchrottId(Alphabets.Base64, Permutation, 3);
+
+        var ex = Assert.Throws<FormatException>(() => schrottId.Decode("$%&"));
+
+        Assert.Contains("Character not in alphabet", ex.Message);
     }
 }

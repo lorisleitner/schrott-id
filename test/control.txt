@@ -1,6 +1,9 @@
+# This file contains the encoded values from 0 to 9999 using the following parameters:
 # Alphabet = ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
 # Permutation = HwEMFAcAMAYEPxc4Dy4RAxAkEgstJggbGSMiKB0yHgk7OSsNMxoYKRMWNg49LzEFFTQKPDUhHAIsICclOio+Nw==
 # Min length = 3
+
+# Use this file to verify implementations in new languages
 
 pAJ
 g5B

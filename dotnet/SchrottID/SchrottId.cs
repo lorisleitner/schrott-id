@@ -89,6 +89,13 @@ public class SchrottId
                 nameof(alphabet));
         }
 
+        if (alphabet.Distinct().Count() != alphabet.Length)
+        {
+            throw new ArgumentException(
+                "Alphabet must have unique characters",
+                nameof(alphabet));
+        }
+
         Span<byte> buf = stackalloc byte[alphabet.Length];
 
         for (var i = 0; i < buf.Length; ++i)
@@ -185,7 +192,7 @@ public class SchrottId
         {
             if (!_inverseAlphabet.TryGetValue(value[i], out buf[i]))
             {
-                throw new FormatException("Invalid character");
+                throw new FormatException("Character not in alphabet");
             }
         }
     }
