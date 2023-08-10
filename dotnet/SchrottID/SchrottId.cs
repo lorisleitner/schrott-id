@@ -202,9 +202,8 @@ public class SchrottId
         var i = buf.Length;
         do
         {
-            var (quotient, remainder) = UInt64.DivRem(
-                value,
-                (UInt64)_alphabet.Length);
+            var quotient = value / (UInt64)_alphabet.Length;
+            var remainder = value % (UInt64)_alphabet.Length;
 
             buf[--i] = (byte)remainder;
             value = quotient;

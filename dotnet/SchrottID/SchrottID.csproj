@@ -1,9 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Authors>Loris Leitner</Authors>
+        <Copyright>https://github.com/lorisleitner/schrott-id</Copyright>
+        <PackageProjectUrl>https://github.com/lorisleitner/schrott-id</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/lorisleitner/schrott-id/blob/main/LICENSE.md</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/lorisleitner/schrott-id</RepositoryUrl>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Title>SchrottID</Title>
+        <LangVersion>latest</LangVersion>
+        <Description>SchrottID is a library for generating short, non-consecutive and opaque IDs from unsigned integers.</Description>
     </PropertyGroup>
 
 </Project>
