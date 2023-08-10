@@ -1,5 +1,7 @@
 # SchrottID
 
+![Nuget](https://img.shields.io/nuget/dt/SchrottID?logo=nuget&label=NuGet)
+
 SchrottID is a library for generating short, non-consecutive and opaque IDs from unsigned integers.
 These can be used to obfuscate integer primary keys from your database and prevent enumeration of rows and other
 confidential information
