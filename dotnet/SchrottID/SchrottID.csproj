@@ -8,12 +8,17 @@
         <Authors>Loris Leitner</Authors>
         <Copyright>https://github.com/lorisleitner/schrott-id</Copyright>
         <PackageProjectUrl>https://github.com/lorisleitner/schrott-id</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/lorisleitner/schrott-id/blob/main/LICENSE.md</PackageLicenseUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/lorisleitner/schrott-id</RepositoryUrl>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <Title>SchrottID</Title>
         <LangVersion>latest</LangVersion>
         <Description>SchrottID is a library for generating short, non-consecutive and opaque IDs from unsigned integers.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="/"/>
+    </ItemGroup>
 
 </Project>
