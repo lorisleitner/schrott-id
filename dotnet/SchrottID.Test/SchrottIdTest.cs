@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-
 namespace SchrottId.Test;
 
 public class SchrottIdTest
