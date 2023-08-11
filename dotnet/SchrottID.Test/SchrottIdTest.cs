@@ -40,14 +40,19 @@ public class SchrottIdTest
     [Fact]
     public void TestGeneratePermutation()
     {
-        var permutation = SchrottId.GeneratePermutation(Alphabets.Base64);
-        var permutationBytes = Convert.FromBase64String(permutation);
+        // This test depends on randomness, loop 1000 times to make sure we cover as many cases as possible
 
-        Assert.Equal(Alphabets.Base64.Length, permutationBytes.Length);
+        for (var i = 0; i < 1000; ++i)
+        {
+            var permutation = SchrottId.GeneratePermutation(Alphabets.Base64);
+            var permutationBytes = Convert.FromBase64String(permutation);
 
-        Assert.True(permutationBytes.Distinct().Count() == permutationBytes.Length);
-        Assert.True(permutationBytes.Min() == 0);
-        Assert.True(permutationBytes.Max() == Alphabets.Base64.Length - 1);
+            Assert.Equal(Alphabets.Base64.Length, permutationBytes.Length);
+
+            Assert.True(permutationBytes.Distinct().Count() == permutationBytes.Length);
+            Assert.True(permutationBytes.Min() == 0);
+            Assert.True(permutationBytes.Max() == Alphabets.Base64.Length - 1);
+        }
     }
 
     [Fact]
@@ -55,7 +60,7 @@ public class SchrottIdTest
     {
         var ex = Assert.Throws<ArgumentException>(() => SchrottId.GeneratePermutation("A"));
 
-        Assert.Contains("Alphabet length must have 2 to 256 characters", ex.Message);
+        Assert.Contains("Alphabet must have 2 to 256 characters", ex.Message);
     }
 
     [Fact]
@@ -63,7 +68,7 @@ public class SchrottIdTest
     {
         var ex = Assert.Throws<ArgumentException>(() => SchrottId.GeneratePermutation(new string('A', 257)));
 
-        Assert.Contains("Alphabet length must have 2 to 256 characters", ex.Message);
+        Assert.Contains("Alphabet must have 2 to 256 characters", ex.Message);
     }
 
     [Fact]
@@ -79,7 +84,7 @@ public class SchrottIdTest
     {
         var ex = Assert.Throws<ArgumentException>(() => new SchrottId("A", "B", 3));
 
-        Assert.Contains("Alphabet length must have 2 to 256 characters", ex.Message);
+        Assert.Contains("Alphabet must have 2 to 256 characters", ex.Message);
     }
 
     [Fact]
@@ -87,7 +92,7 @@ public class SchrottIdTest
     {
         var ex = Assert.Throws<ArgumentException>(() => new SchrottId(new string('A', 257), "B", 3));
 
-        Assert.Contains("Alphabet length must have 2 to 256 characters", ex.Message);
+        Assert.Contains("Alphabet must have 2 to 256 characters", ex.Message);
     }
 
     [Fact]

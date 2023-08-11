@@ -44,7 +44,7 @@ always stable.
 
 ### Creating a new implementation
 
-Implementations in other languages are very welcome. Create a new folder for your implementation and create a pull
+Implementations in other languages are very welcome. Create a new folder for your implementation and submit a pull
 request. Use `test/control.txt` to verify your implementation. `C#` is the reference implementation.
 
 ---
