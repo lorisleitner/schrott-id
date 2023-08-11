@@ -39,7 +39,7 @@ public class SchrottId
         if (alphabet.Length is <= 1 or > 256)
         {
             throw new ArgumentException(
-                "Alphabet length must have 2 to 256 characters",
+                "Alphabet must have 2 to 256 characters",
                 nameof(alphabet));
         }
 
@@ -108,7 +108,7 @@ public class SchrottId
         if (alphabet.Length is <= 1 or > 256)
         {
             throw new ArgumentException(
-                "Alphabet length must have 2 to 256 characters",
+                "Alphabet must have 2 to 256 characters",
                 nameof(alphabet));
         }
 
@@ -149,7 +149,7 @@ public class SchrottId
         ConvertToBase(value, buf);
 
         for (var i = 0;
-             i < buf.Length + _alphabet.Length;
+             i < buf.Length * 3;
              ++i)
         {
             RotateLeft(buf);
@@ -177,7 +177,7 @@ public class SchrottId
         ConvertFromBase(value, buf);
 
         for (var i = 0;
-             i < buf.Length + _alphabet.Length;
+             i < buf.Length * 3;
              ++i)
         {
             RotateRight(buf);
