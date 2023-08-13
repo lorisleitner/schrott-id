@@ -166,11 +166,11 @@ public class SchrottId
     /// Decodes a SchrottID back to an integer value.
     ///
     /// This method allocates n bytes memory on the stack where n = value.Length.
-    /// Make sure to check the length of value before calling this method
+    /// Make sure to check the length of value before calling this method.
     /// </summary>
     /// <param name="value">The value to decode</param>
     /// <returns>The decoded SchrottID</returns>
-    /// <exception cref="FormatException">The supplied value contains a character that is not present in the alphabet</exception>
+    /// <exception cref="FormatException">The supplied value contains a character that is not present in the alphabet.</exception>
     public UInt64 Decode(string value)
     {
         Span<byte> buf = stackalloc byte[value.Length];
