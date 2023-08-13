@@ -1,3 +1,7 @@
+/**
+ * Single header implementation for generating SchrottIDs
+ */
+
 #ifndef SCHROTT_ID_HPP
 #define SCHROTT_ID_HPP
 
@@ -140,6 +144,13 @@ namespace s_id
 
     namespace util
     {
+        /**
+         * Tests whether a range of elements only contains unique elements.
+         * @tparam It Iterator type
+         * @param begin Range begin
+         * @param end Range end
+         * @return True, if range of elements is unique
+         */
         template<class It>
         bool is_unique(It begin, It end)
         {
@@ -165,6 +176,9 @@ namespace s_id
         const char* base32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
     }
 
+    /**
+     * Provides encoding and decoding of SchrottIDs
+     */
     class schrott_id
     {
     private:
@@ -178,6 +192,21 @@ namespace s_id
 
     public:
 
+        /**
+         * Creates a new instance of the SchrottID encoder class.
+         *
+         * SchrottIDs can only be decoded if the parameters to this constructor are equal
+         * to the ones that were supplied to create the SchrottID.
+         *
+         * This constructor verifies parameters and creates internal structures.
+         * Instances should be reused as often as possible.
+         * @param alphabet The alphabet that the encoder and decoder will use.
+         * @param permutation The randomly generated permutation to use.
+         * Generate permutations using @see generate_permutation
+         * Permutations are dependent on the supplied alphabet.
+         * @param min_length The minimum length of the encoded ID that the @see encode method will produce.
+         * @throws std::invalid_argument A supplied parameter cannot be used to create an encoder.
+         */
         schrott_id(
                 std::string alphabet,
                 const std::string& permutation,
@@ -232,6 +261,12 @@ namespace s_id
             }
         }
 
+        /**
+         * Generates a secure random permutation for the supplied alphabet.
+         * @param alphabet The alphabet
+         * @return A randomly generated permutation to use with the @see schrott_id class
+         * @throws std::invald_argument Alphabet is not between 2 and 256 chars long or chars are not unique.
+         */
         static std::string generate_permutation(const std::string& alphabet)
         {
             if (alphabet.size() <= 1
@@ -264,6 +299,11 @@ namespace s_id
             return base64::encode(permutation);
         }
 
+        /**
+         * Encodes an integer value to a SchrottID
+         * @param value The value to encode
+         * @return Encoded SchrottID
+         */
         std::string encode(std::uint64_t value) const
         {
             auto buf = convert_to_base(value);
@@ -280,6 +320,12 @@ namespace s_id
             return convert_to_string(buf);
         }
 
+        /**
+         * Decodes a SchrottID back to an integer value
+         * @param value The value to decode
+         * @return The decoded SchrottID
+         * @throws std::out_of_range The supplied value contains a character that is not present in the alphabet.
+         */
         std::uint64_t decode(const std::string& value) const
         {
             auto buf = convert_from_base(value);
