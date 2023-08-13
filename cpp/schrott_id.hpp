@@ -1,5 +1,7 @@
 /**
- * Single header implementation for generating SchrottIDs
+ * Single header implementation for generating SchrottIDs v2.0.0
+ *
+ * https://github.com/lorisleitner/schrott-id
  */
 
 #ifndef SCHROTT_ID_HPP
