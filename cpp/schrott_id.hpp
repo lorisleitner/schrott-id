@@ -216,7 +216,7 @@ namespace s_id
 
             if (!util::is_unique(permutation_.begin(), permutation_.end()))
             {
-                throw std::invalid_argument("Invalid permutation. Alle positions must be unique.");
+                throw std::invalid_argument("Invalid permutation. All positions must be unique.");
             }
 
             if (*std::min_element(permutation_.begin(), permutation_.end()) != 0
@@ -344,7 +344,7 @@ namespace s_id
                 }
                 else
                 {
-                    throw std::out_of_range("Invalid character");
+                    throw std::out_of_range("Character not in alphabet");
                 }
             }
 
