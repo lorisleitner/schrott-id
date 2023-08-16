@@ -3,7 +3,7 @@
 <img alt="Nuget" src="https://img.shields.io/nuget/dt/SchrottID?logo=nuget&label=NuGet&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSchrottID%2F">
 
 SchrottID is a library for generating short, non-consecutive and opaque IDs from unsigned integers.
-These can be used to obfuscate integer primary keys from your database and prevent enumeration of rows and other
+These can be used to obfuscate integer primary keys from your database and prevent enumeration of rows and leaking other
 confidential information
 (see [German tank problem](https://de.wikipedia.org/wiki/German_tank_problem)).
 
@@ -33,6 +33,7 @@ ulong primaryKey = 420;
 string externalId = schrottId.Encode(primaryKey);
 // externalId = 9TN
 
+// Decode back into your internal ID
 ulong decodedKey = schrottId.Decode(externalId);
 // decodedKey = 420
 ```

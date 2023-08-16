@@ -5,12 +5,13 @@
 #include "schrott_id.hpp"
 
 using namespace Catch;
+using namespace schrott_id_n;
 
 auto test_permutation = "HwEMFAcAMAYEPxc4Dy4RAxAkEgstJggbGSMiKB0yHgk7OSsNMxoYKRMWNg49LzEFFTQKPDUhHAIsICclOio+Nw==";
 
 TEST_CASE("Encode and decode first 10000")
 {
-    s_id::schrott_id schrott_id(s_id::alphabets::base64, test_permutation, 3);
+    schrott_id schrott_id(alphabets::base64, test_permutation, 3);
 
     for (std::uint64_t i = 0; i < 10000; ++i)
     {
@@ -41,7 +42,7 @@ TEST_CASE("Test encode decode control")
         }
     }
 
-    s_id::schrott_id schrott_id(s_id::alphabets::base64, test_permutation, 3);
+    schrott_id schrott_id(alphabets::base64, test_permutation, 3);
 
     std::vector<std::string> schrott_ids;
     schrott_ids.reserve(10000);
@@ -60,90 +61,90 @@ TEST_CASE("Generate permutation")
 
     for (auto i = 0; i < 1000; ++i)
     {
-        auto permutationString = s_id::schrott_id::generate_permutation(s_id::alphabets::base64);
+        auto permutationString = schrott_id::generate_permutation(alphabets::base64);
 
-        auto permutation = s_id::base64::decode(permutationString);
+        auto permutation = base64::decode(permutationString);
 
-        REQUIRE(permutation.size() == strlen(s_id::alphabets::base64));
-        REQUIRE(s_id::util::is_unique(permutation.begin(), permutation.end()));
+        REQUIRE(permutation.size() == strlen(alphabets::base64));
+        REQUIRE(util::is_unique(permutation.begin(), permutation.end()));
 
         int min_element = *std::min_element(permutation.begin(), permutation.end());
         int max_element = *std::max_element(permutation.begin(), permutation.end());
 
         REQUIRE(min_element == 0);
-        REQUIRE(max_element == strlen(s_id::alphabets::base64) - 1);
+        REQUIRE(max_element == strlen(alphabets::base64) - 1);
     }
 }
 
 TEST_CASE("Generate permutation alphabet too short")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id::generate_permutation("A"),
+    REQUIRE_THROWS_WITH(schrott_id::generate_permutation("A"),
                         Contains("Alphabet must have 2 to 256 characters"));
 }
 
 TEST_CASE("Generate permutation alphabet too long")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id::generate_permutation("A"),
+    REQUIRE_THROWS_WITH(schrott_id::generate_permutation("A"),
                         Contains("Alphabet must have 2 to 256 characters"));
 }
 
 TEST_CASE("Generate permutation alphabet not unique")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id::generate_permutation("A"),
+    REQUIRE_THROWS_WITH(schrott_id::generate_permutation("A"),
                         Contains("Alphabet must have 2 to 256 characters"));
 }
 
 TEST_CASE("Alphabet too short")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id::generate_permutation("A"),
+    REQUIRE_THROWS_WITH(schrott_id::generate_permutation("A"),
                         Contains("Alphabet must have 2 to 256 characters"));
 }
 
 TEST_CASE("Alphabet too long")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id(std::string(257, 'A'), test_permutation, 3),
+    REQUIRE_THROWS_WITH(schrott_id(std::string(257, 'A'), test_permutation, 3),
                         Contains("Alphabet must have 2 to 256 characters"));
 }
 
 TEST_CASE("Alphabet not unique")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id(std::string(3, 'A'), test_permutation, 3),
+    REQUIRE_THROWS_WITH(schrott_id(std::string(3, 'A'), test_permutation, 3),
                         Contains("Alphabet must have unique characters"));
 }
 
 TEST_CASE("Min length negative")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id("ABC", test_permutation, -1),
+    REQUIRE_THROWS_WITH(schrott_id("ABC", test_permutation, -1),
                         Contains("min_length must be greater than 0"));
 }
 
 TEST_CASE("Permutation invalid Base64")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id("ABC", "√∫¥", 3),
+    REQUIRE_THROWS_WITH(schrott_id("ABC", "√∫¥", 3),
                         Contains("Base64"));
 }
 
 TEST_CASE("Permutation length not equal to alphabet")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id(s_id::alphabets::base64, "ChwDGxoUBBMLFRARDhIFDAIXGAcAHg0PAR8WCAYdCRk=", 3),
+    REQUIRE_THROWS_WITH(schrott_id(alphabets::base64, "ChwDGxoUBBMLFRARDhIFDAIXGAcAHg0PAR8WCAYdCRk=", 3),
                         Contains("Permutation length must be equal to alphabet length"));
 }
 
 TEST_CASE("Permutation not unique")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id(s_id::alphabets::base32, "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=", 3),
+    REQUIRE_THROWS_WITH(schrott_id(alphabets::base32, "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE=", 3),
                         Contains("All positions must be unique"));
 }
 
 TEST_CASE("Permutation invalid indices")
 {
-    REQUIRE_THROWS_WITH(s_id::schrott_id(s_id::alphabets::base32, "twUkTIghtQiRcOQfJtmNRrYbOa9viXe784YeeHp8gec=", 3),
+    REQUIRE_THROWS_WITH(schrott_id(alphabets::base32, "twUkTIghtQiRcOQfJtmNRrYbOa9viXe784YeeHp8gec=", 3),
                         Contains("Invalid indices for used alphabet"));
 }
 
 TEST_CASE("Decode invalid")
 {
-    auto schrott_id = s_id::schrott_id(s_id::alphabets::base64, test_permutation, 3);
+    auto s_id = schrott_id(alphabets::base64, test_permutation, 3);
 
-    REQUIRE_THROWS_WITH(schrott_id.decode("$%&"), Contains("Character not in alphabet"));
+    REQUIRE_THROWS_WITH(s_id.decode("$%&"), Contains("Character not in alphabet"));
 }
