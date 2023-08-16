@@ -128,6 +128,12 @@ public class SchrottIdEncoder
         return Encode(values.ToArray());
     }
 
+    /// <summary>
+    /// Encodes a collection of integer values to SchrottIDs.
+    /// </summary>
+    /// <param name="values">Collection of values to encode</param>
+    /// <returns>Encoded SchrottIDs, in the same order they were supplied</returns>
+    /// <exception cref="OverflowException">Cannot convert Int32 to UInt64</exception>
     public IEnumerable<string> Encode(IEnumerable<Int32> values)
     {
         return Encode(values.Select(x => checked((UInt64)x)).ToArray());
