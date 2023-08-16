@@ -1,5 +1,5 @@
 /**
- * Single header implementation for generating SchrottIDs v2.0.0
+ * Single header implementation for generating SchrottIDs v3.0.0
  *
  * https://github.com/lorisleitner/schrott-id
  */
@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-namespace schrott_id_n
+namespace schrott_id
 {
     using byte = std::uint8_t;
 
@@ -181,7 +181,7 @@ namespace schrott_id_n
     /**
      * Provides encoding and decoding of SchrottIDs
      */
-    class schrott_id
+    class schrott_id_encoder
     {
     private:
         std::string alphabet_;
@@ -209,7 +209,7 @@ namespace schrott_id_n
          * @param min_length The minimum length of the encoded ID that the @see encode method will produce.
          * @throws std::invalid_argument A supplied parameter cannot be used to create an encoder.
          */
-        schrott_id(
+        schrott_id_encoder(
                 std::string alphabet,
                 const std::string& permutation,
                 int min_length)
@@ -266,7 +266,7 @@ namespace schrott_id_n
         /**
          * Generates a secure random permutation for the supplied alphabet.
          * @param alphabet The alphabet
-         * @return A randomly generated permutation to use with the @see schrott_id class
+         * @return A randomly generated permutation to use with the @see schrott_id_encoder class
          * @throws std::invald_argument Alphabet is not between 2 and 256 chars long or chars are not unique.
          */
         static std::string generate_permutation(const std::string& alphabet)
