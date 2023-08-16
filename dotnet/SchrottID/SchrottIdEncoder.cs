@@ -96,22 +96,27 @@ public class SchrottIdEncoder
 
         _minLength = minLength;
     }
-    
+
+    /// <summary>
+    /// Encodes an integer value to a SchrottID.
+    /// </summary>
+    /// <param name="value">The values to encode.</param>
+    /// <returns>Encoded SchrottID</returns>
     public string Encode(UInt64 value)
     {
         return Encode(new[] { value })[0];
     }
 
+    /// <summary>
+    /// Encodes a collection of integer values to SchrottIDs.
+    /// </summary>
+    /// <param name="values">Collection of values to encode</param>
+    /// <returns>Encoded SchrottIDs, in the same order they were supplied</returns>
     public IEnumerable<string> Encode(IEnumerable<UInt64> values)
     {
         return Encode(values.ToArray());
     }
 
-    /// <summary>
-    /// Encodes an integer value to a SchrottID.
-    /// </summary>
-    /// <param name="values">The values to encode.</param>
-    /// <returns>Encoded SchrottID</returns>
     private string[] Encode(UInt64[] values)
     {
         var result = new string[values.Length];
@@ -142,25 +147,28 @@ public class SchrottIdEncoder
         return result;
     }
 
+    /// <summary>
+    /// Decodes a SchrottID back to an integer value.
+    /// </summary>
+    /// <param name="value">The value to decode</param>
+    /// <returns>The decoded SchrottID</returns>
+    /// <exception cref="FormatException">The supplied value contains a character that is not present in the alphabet.</exception>
     public UInt64 Decode(string value)
     {
         return Decode(new[] { value })[0];
     }
 
+    /// <summary>
+    /// Decodes a collection of SchrottIDs back to integer values.
+    /// </summary>
+    /// <param name="values">The values to decode</param>
+    /// <returns>The decoded SchrottIDs, in the same order they were supplied</returns>
+    /// <exception cref="FormatException">A supplied value contains a character that is not present in the alphabet.</exception>
     public IEnumerable<UInt64> Decode(IEnumerable<string> values)
     {
         return Decode(values.ToArray());
     }
 
-    /// <summary>
-    /// Decodes a SchrottID back to an integer value.
-    ///
-    /// This method allocates n bytes memory on the stack where n = value.Length.
-    /// Make sure to check the length of value before calling this method.
-    /// </summary>
-    /// <param name="values">The values to decode</param>
-    /// <returns>The decoded SchrottID</returns>
-    /// <exception cref="FormatException">The supplied value contains a character that is not present in the alphabet.</exception>
     private UInt64[] Decode(string[] values)
     {
         var result = new UInt64[values.Length];
