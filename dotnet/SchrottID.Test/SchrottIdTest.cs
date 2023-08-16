@@ -36,6 +36,22 @@ public class SchrottIdTest
     }
 
     [Fact]
+    public void TestEncodeNegativeIntList()
+    {
+        var schrottId = new SchrottIdEncoder(Alphabets.Base64, Permutation, minLength: 3);
+
+        Assert.Throws<OverflowException>(() => schrottId.Encode(new[] { -1, -2 }));
+    }
+
+    [Fact]
+    public void TestEncodeNegativeInt()
+    {
+        var schrottId = new SchrottIdEncoder(Alphabets.Base64, Permutation, minLength: 3);
+
+        Assert.Throws<OverflowException>(() => schrottId.Encode(-1));
+    }
+
+    [Fact]
     public void TestEncodeDecodeControl()
     {
         // control.txt contains the encoded values from 0 to 9999

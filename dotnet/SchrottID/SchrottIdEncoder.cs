@@ -108,6 +108,17 @@ public class SchrottIdEncoder
     }
 
     /// <summary>
+    /// Encodes an integer value to a SchrottID.
+    /// </summary>
+    /// <param name="value">The values to encode.</param>
+    /// <returns>Encoded SchrottID</returns>
+    /// <exception cref="OverflowException">Cannot convert Int32 to UInt64</exception>
+    public string Encode(Int32 value)
+    {
+        return Encode(checked((UInt64)value));
+    }
+
+    /// <summary>
     /// Encodes a collection of integer values to SchrottIDs.
     /// </summary>
     /// <param name="values">Collection of values to encode</param>
@@ -115,6 +126,11 @@ public class SchrottIdEncoder
     public IEnumerable<string> Encode(IEnumerable<UInt64> values)
     {
         return Encode(values.ToArray());
+    }
+
+    public IEnumerable<string> Encode(IEnumerable<Int32> values)
+    {
+        return Encode(values.Select(x => checked((UInt64)x)).ToArray());
     }
 
     private string[] Encode(UInt64[] values)
