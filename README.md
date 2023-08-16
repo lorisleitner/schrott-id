@@ -16,7 +16,7 @@ string alphabet = Alphabets.Base64;
 // Generate a permutation for your alphabet
 // The permutation is your "key" for encoding and decoding
 // You cannot decode IDs correctly without this key
-string permutation = SchrottId.GeneratePermutation(alphabet);
+string permutation = SchrottIdUtil.GeneratePermutation(alphabet);
 
 // Choose a minimum length for your SchrottIDs
 int minimumLength = 3;
@@ -24,7 +24,7 @@ int minimumLength = 3;
 // Make sure to store the three parameters above
 
 // Create a encoder/decoder
-SchrottId schrottId = new SchrottId(alphabet, permutation, minimumLength);
+SchrottIdEncoder schrottId = new SchrottIdEncoder(alphabet, permutation, minimumLength);
 
 // A primary key from your database
 ulong primaryKey = 420;

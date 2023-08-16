@@ -6,7 +6,7 @@ namespace SchrottId;
 /// <summary>
 /// Allows encoding and decoding of SchrottIDs
 /// </summary>
-public class SchrottId
+public class SchrottIdEncoder
 {
     private readonly string _alphabet;
     private readonly Dictionary<char, byte> _inverseAlphabet;
@@ -31,7 +31,7 @@ public class SchrottId
     /// <param name="minLength">The minimum length of the encoded ID that the <see cref="Encode"/> method will produce.</param>
     /// <exception cref="ArgumentException">A supplied parameter cannot be used to create an encoder.</exception>
     /// <exception cref="FormatException">The permutation is not a valid Base64 string.</exception>
-    public SchrottId(
+    public SchrottIdEncoder(
         string alphabet,
         string permutation,
         int minLength)
@@ -96,70 +96,60 @@ public class SchrottId
 
         _minLength = minLength;
     }
-
-    /// <summary>
-    /// Generates a secure random permutation for the supplied alphabet.
-    /// </summary>
-    /// <param name="alphabet">The alphabet</param>
-    /// <returns>A randomly generated permutation to use the <see cref="SchrottId"/> class.</returns>
-    /// <exception cref="ArgumentException">Alphabet is not between 2 and 256 chars long or chars are not unique.</exception>
-    public static string GeneratePermutation(string alphabet)
+    
+    public string Encode(UInt64 value)
     {
-        if (alphabet.Length is <= 1 or > 256)
-        {
-            throw new ArgumentException(
-                "Alphabet must have 2 to 256 characters",
-                nameof(alphabet));
-        }
+        return Encode(new[] { value })[0];
+    }
 
-        if (alphabet.Distinct().Count() != alphabet.Length)
-        {
-            throw new ArgumentException(
-                "Alphabet must have unique characters",
-                nameof(alphabet));
-        }
-
-        Span<byte> buf = stackalloc byte[alphabet.Length];
-
-        for (var i = 0; i < buf.Length; ++i)
-        {
-            buf[i] = (byte)i;
-        }
-
-        for (var i = 0; i < buf.Length; ++i)
-        {
-            var p = RandomNumberGenerator.GetInt32(buf.Length);
-
-            (buf[i], buf[p]) = (buf[p], buf[i]);
-        }
-
-        return Convert.ToBase64String(buf);
+    public IEnumerable<string> Encode(IEnumerable<UInt64> values)
+    {
+        return Encode(values.ToArray());
     }
 
     /// <summary>
     /// Encodes an integer value to a SchrottID.
     /// </summary>
-    /// <param name="value">The value to encode.</param>
+    /// <param name="values">The values to encode.</param>
     /// <returns>Encoded SchrottID</returns>
-    public string Encode(UInt64 value)
+    private string[] Encode(UInt64[] values)
     {
-        var length = GetLength(value);
-        Span<byte> buf = stackalloc byte[length];
+        var result = new string[values.Length];
 
-        ConvertToBase(value, buf);
-
-        for (var i = 0;
-             i < buf.Length * 3;
-             ++i)
+        for (var i = 0; i < values.Length; i++)
         {
-            RotateLeft(buf);
-            PermuteForward(buf);
-            RotateLeft(buf);
-            CascadeForward(buf);
-            RotateLeft(buf);
+            var value = values[i];
+
+            var length = GetLength(value);
+            var buf = new byte[length];
+
+            ConvertToBase(value, buf);
+
+            for (var round = 0;
+                 round < buf.Length * 3;
+                 ++round)
+            {
+                RotateLeft(buf);
+                PermuteForward(buf);
+                RotateLeft(buf);
+                CascadeForward(buf);
+                RotateLeft(buf);
+            }
+
+            result[i] = ConvertToString(buf);
         }
 
-        return ConvertToString(buf);
+        return result;
+    }
+
+    public UInt64 Decode(string value)
+    {
+        return Decode(new[] { value })[0];
+    }
+
+    public IEnumerable<UInt64> Decode(IEnumerable<string> values)
+    {
+        return Decode(values.ToArray());
     }
 
     /// <summary>
@@ -168,26 +158,35 @@ public class SchrottId
     /// This method allocates n bytes memory on the stack where n = value.Length.
     /// Make sure to check the length of value before calling this method.
     /// </summary>
-    /// <param name="value">The value to decode</param>
+    /// <param name="values">The values to decode</param>
     /// <returns>The decoded SchrottID</returns>
     /// <exception cref="FormatException">The supplied value contains a character that is not present in the alphabet.</exception>
-    public UInt64 Decode(string value)
+    private UInt64[] Decode(string[] values)
     {
-        Span<byte> buf = stackalloc byte[value.Length];
-        ConvertFromBase(value, buf);
+        var result = new UInt64[values.Length];
 
-        for (var i = 0;
-             i < buf.Length * 3;
-             ++i)
+        for (var i = 0; i < values.Length; ++i)
         {
-            RotateRight(buf);
-            CascadeBackward(buf);
-            RotateRight(buf);
-            PermuteBackward(buf);
-            RotateRight(buf);
+            var value = values[i];
+
+            var buf = new byte[value.Length];
+            ConvertFromBase(value, buf);
+
+            for (var round = 0;
+                 round < buf.Length * 3;
+                 ++round)
+            {
+                RotateRight(buf);
+                CascadeBackward(buf);
+                RotateRight(buf);
+                PermuteBackward(buf);
+                RotateRight(buf);
+            }
+
+            result[i] = ConvertToValue(buf);
         }
 
-        return ConvertToValue(buf);
+        return result;
     }
 
     private int GetLength(UInt64 value)
@@ -197,7 +196,7 @@ public class SchrottId
             (int)Math.Ceiling(Math.Log(value + 1, _alphabet.Length)));
     }
 
-    private void ConvertToBase(UInt64 value, Span<byte> buf)
+    private void ConvertToBase(UInt64 value, byte[] buf)
     {
         var i = buf.Length;
         do
@@ -210,9 +209,9 @@ public class SchrottId
         } while (value > 0);
     }
 
-    private string ConvertToString(Span<byte> buf)
+    private string ConvertToString(byte[] buf)
     {
-        Span<char> charBuf = stackalloc char[buf.Length];
+        var charBuf = new char[buf.Length];
 
         for (var i = 0; i < buf.Length; ++i)
         {
@@ -222,7 +221,7 @@ public class SchrottId
         return new string(charBuf);
     }
 
-    private void ConvertFromBase(string value, Span<byte> buf)
+    private void ConvertFromBase(string value, byte[] buf)
     {
         for (var i = 0; i < value.Length; ++i)
         {
@@ -233,7 +232,7 @@ public class SchrottId
         }
     }
 
-    private UInt64 ConvertToValue(Span<byte> buf)
+    private UInt64 ConvertToValue(byte[] buf)
     {
         UInt64 value = 0;
 
@@ -251,23 +250,23 @@ public class SchrottId
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void RotateLeft(Span<byte> buf)
+    private void RotateLeft(byte[] buf)
     {
         var first = buf[0];
-        buf[1..].CopyTo(buf);
-        buf[^1] = first;
+        Array.Copy(buf, 1, buf, 0, buf.Length - 1);
+        buf[buf.Length - 1] = first;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void RotateRight(Span<byte> buf)
+    private void RotateRight(byte[] buf)
     {
-        var last = buf[^1];
-        buf[..^1].CopyTo(buf[1..]);
+        var last = buf[buf.Length - 1];
+        Array.Copy(buf, 0, buf, 1, buf.Length - 1);
         buf[0] = last;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void PermuteForward(Span<byte> buf)
+    private void PermuteForward(byte[] buf)
     {
         for (var i = 0; i < buf.Length; ++i)
         {
@@ -276,7 +275,7 @@ public class SchrottId
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void PermuteBackward(Span<byte> buf)
+    private void PermuteBackward(byte[] buf)
     {
         for (var i = 0; i < buf.Length; ++i)
         {
@@ -285,7 +284,7 @@ public class SchrottId
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CascadeForward(Span<byte> buf)
+    private void CascadeForward(byte[] buf)
     {
         byte last = 0;
         for (var i = 0; i < buf.Length; ++i)
@@ -296,7 +295,7 @@ public class SchrottId
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CascadeBackward(Span<byte> buf)
+    private void CascadeBackward(byte[] buf)
     {
         byte last = 0;
 
